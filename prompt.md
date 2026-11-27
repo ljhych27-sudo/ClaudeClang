@@ -99,3 +99,10 @@
 
 **Response**
 - `.claude/agents/aspice-reviewer.md` 프론트매터에 `model: haiku` 추가 후 커밋
+
+### 11. 커밋 및 푸시
+**Prompt**
+> commit push
+
+**Response**
+- 로컬 커밋 3개(`bcc1793`, `063ce91`, `4d0cd5c`)와 이 기록을 `origin/main`에 푸시
