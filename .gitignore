@@ -1,2 +1,8 @@
 # Claude Code personal settings
 .claude/settings.local.json
+
+# Build output
+build/
+out/
+compile_commands.json
+.cache/

@@ -38,3 +38,29 @@
 **Response**
 - `prompt.md`, `CLAUDE.md` 변경 사항 커밋 후 `origin/main`에 푸시
 - "요 보 인"의 의미가 불명확해 사용자에게 확인 요청
+
+### 5. 불완전한 프롬프트
+**Prompt**
+> 검
+
+**Response**
+- 입력이 한 글자("검")뿐이라 의도가 불명확해 사용자에게 확인 요청 (검색/검토/검증 등)
+
+### 6. 현황 점검
+**Prompt**
+> 현황점검
+
+**Response**
+- 브랜치 `main`, `origin/main`과 동기화 상태. 미커밋 변경은 `prompt.md`뿐
+- 구성: `.claude/settings.json`(권한 비어 있음), `skills/`·`agents/`는 빈 폴더, `CLAUDE.md` 프로젝트 개요 미작성
+- 소스 코드 없음. 다음 단계로 프로젝트 목적 정의, 스킬/에이전트 추가 제안
+
+### 7. 진행
+**Prompt**
+> 진행
+
+**Response**
+- 1단계(개요 작성)는 프로젝트 목적이 필요해 사용자에게 목적 확인 질문
+- 사용자 답변: 목적은 "Clang 기반 C/C++ 개발", 커밋·푸시까지 진행
+- `CLAUDE.md` 프로젝트 개요 작성, `README.md`에 요구 사항·빌드 방법 추가, `.gitignore`에 빌드 산출물(`build/`, `out/`, `compile_commands.json`, `.cache/`) 추가
+- 커밋 후 `origin/main`에 푸시

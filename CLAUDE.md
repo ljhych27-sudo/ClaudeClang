@@ -1,7 +1,11 @@
 # ClaudeClang
 
 ## 프로젝트 개요
-(프로젝트 설명을 작성하세요)
+Clang/LLVM 툴체인으로 C/C++ 코드를 작성·빌드하는 프로젝트.
+
+- 컴파일러: `clang` / `clang++`
+- 포맷·정적 분석: `clang-format`, `clang-tidy`
+- 빌드 시스템: CMake (빌드 산출물은 `build/`, git 제외)
 
 ## Claude Code 구성
 - `.claude/settings.json` — 팀 공유 설정 (권한, 훅 등)
