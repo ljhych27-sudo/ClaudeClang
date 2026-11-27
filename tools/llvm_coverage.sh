@@ -19,10 +19,14 @@ Usage: llvm_coverage.sh [options]
   --ctest-regex RE     Run only tests matching RE (ctest -R)  (default: all)
   --ignore RE          Files to exclude from report
                        (default: '(tests|_deps|third_party)[/\\]')
+  --function N         Required function coverage % (default: 0)
   --line N             Required line coverage %     (default: 100)
   --branch N           Required branch coverage %   (default: 100)
   --mcdc N             Required MC/DC coverage %, 0 = not measured (default: 0)
   --no-build           Skip configure/build (reuse instrumented build)
+  --report-only        Measure and report coverage, do not enforce targets
+  Test results are written as JUnit XML to <build-dir>/coverage/<label>/junit.xml.
+  Test pass rate must be 100% (any failing test = FAIL).
   -h, --help           Show this help
 EOF
 }
@@ -32,10 +36,12 @@ BUILD_DIR="build-cov"
 LABEL="unit"
 CTEST_REGEX=""
 IGNORE_RE='(tests|_deps|third_party)[/\\]'
+REQ_FUNC=0
 REQ_LINE=100
 REQ_BRANCH=100
 REQ_MCDC=0
 DO_BUILD=1
+REPORT_ONLY=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -44,10 +50,12 @@ while [[ $# -gt 0 ]]; do
         --label)       LABEL="$2"; shift 2 ;;
         --ctest-regex) CTEST_REGEX="$2"; shift 2 ;;
         --ignore)      IGNORE_RE="$2"; shift 2 ;;
+        --function)    REQ_FUNC="$2"; shift 2 ;;
         --line)        REQ_LINE="$2"; shift 2 ;;
         --branch)      REQ_BRANCH="$2"; shift 2 ;;
         --mcdc)        REQ_MCDC="$2"; shift 2 ;;
         --no-build)    DO_BUILD=0; shift ;;
+        --report-only) REPORT_ONLY=1; shift ;;
         -h|--help)     usage; exit 0 ;;
         *) echo "Unknown option: $1" >&2; usage; exit 2 ;;
     esac
@@ -89,7 +97,8 @@ rm -rf "$OUT_DIR"
 mkdir -p "$RAW_DIR"
 RAW_ABS="$(cd "$RAW_DIR" && pwd)"
 
-CTEST_ARGS=(--test-dir "$BUILD_DIR" --output-on-failure)
+CTEST_ARGS=(--test-dir "$BUILD_DIR" --output-on-failure --no-tests=error
+            --output-junit "$(pwd)/$OUT_DIR/junit.xml")
 [[ -n "$CTEST_REGEX" ]] && CTEST_ARGS+=(-R "$CTEST_REGEX")
 
 # %p = pid, %m = binary signature: one raw profile per process.
@@ -140,11 +149,12 @@ llvm-cov show "${OBJ_ARGS[@]}" "${COMMON[@]}" -format=html -output-dir="$OUT_DIR
 llvm-cov export "${OBJ_ARGS[@]}" "${COMMON[@]}" -summary-only > "$OUT_DIR/summary.json"
 
 set +e
-"$PYTHON" - "$OUT_DIR/summary.json" "$REQ_LINE" "$REQ_BRANCH" "$REQ_MCDC" <<'PY'
+"$PYTHON" - "$OUT_DIR/summary.json" "$REQ_FUNC" "$REQ_LINE" "$REQ_BRANCH" "$REQ_MCDC" <<'PY'
 import json, sys
-path, req_line, req_branch, req_mcdc = sys.argv[1], *map(float, sys.argv[2:])
+path, req_func, req_line, req_branch, req_mcdc = sys.argv[1], *map(float, sys.argv[2:])
 totals = json.load(open(path))["data"][0]["totals"]
-checks = [("line", "lines", req_line), ("branch", "branches", req_branch)]
+checks = [("function", "functions", req_func), ("line", "lines", req_line),
+          ("branch", "branches", req_branch)]
 if req_mcdc > 0:
     checks.append(("mcdc", "mcdc", req_mcdc))
 ok = True
@@ -152,14 +162,14 @@ print("\n== Coverage vs target ==")
 for name, key, req in checks:
     entry = totals.get(key)
     if entry is None:
-        print(f"{name:7s}: not available (needs clang >= 18 with -fcoverage-mcdc)")
+        print(f"{name:8s}: not available (needs clang >= 18 with -fcoverage-mcdc)")
         ok = False
         continue
     # No branches/conditions at all counts as fully covered.
     pct = 100.0 if entry.get("count", 0) == 0 else entry["percent"]
     status = "PASS" if pct + 1e-9 >= req else "FAIL"
     ok &= status == "PASS"
-    print(f"{name:7s}: {pct:6.2f}% (target {req:g}%)  {status}  "
+    print(f"{name:8s}: {pct:6.2f}% (target {req:g}%)  {status}  "
           f"[{entry.get('covered', 0)}/{entry.get('count', 0)}]")
 sys.exit(0 if ok else 1)
 PY
@@ -171,7 +181,9 @@ if [[ $TEST_RC -ne 0 ]]; then
     echo "RESULT: FAIL (tests failed, ctest exit $TEST_RC)"
     exit 1
 fi
-if [[ $COV_RC -ne 0 ]]; then
+if [[ $COV_RC -ne 0 && $REPORT_ONLY -eq 1 ]]; then
+    echo "NOTE: coverage below target (report-only, not enforced)"
+elif [[ $COV_RC -ne 0 ]]; then
     echo "RESULT: FAIL (coverage target not met)"
     exit 1
 fi

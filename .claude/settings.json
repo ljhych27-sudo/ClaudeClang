@@ -3,5 +3,18 @@
   "permissions": {
     "allow": [],
     "deny": []
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/lizard_check.sh\"",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
   }
 }

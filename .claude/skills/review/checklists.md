@@ -65,8 +65,20 @@
 | CODE-06 | 모든 공개 함수에 doxygen 주석과 `@trace` 태그가 있다 |
 | CODE-07 | 전역 변수가 없고 내부 헬퍼는 `static`으로 캡슐화되었다 |
 | CODE-08 | 다른 모듈과 인터페이스(헤더의 MIF)로만 통신한다 |
-| CODE-09 | 함수 40줄·복잡도 10·파라미터 3개 이하, 매직 넘버 없음 |
-| CODE-10 | clang-format, clang-tidy 통과, 컴파일 경고 0개 |
+| CODE-09 | 순환 복잡도 10 이하·함수 길이 80라인 이하(Lizard), 파라미터 3개 이하, 매직 넘버 없음 |
+| CODE-10 | Clang 경고 0개, clang-format 통과 |
+| CODE-11 | Cppcheck 지적 0건 (억제·예외 없음, `build/reports/cppcheck.xml`로 확인) |
+| CODE-12 | 주석률 20% 이상 — 전체 및 **파일별** (CLOC, `build/reports/cloc.json`으로 확인) |
+| CODE-13 | 모든 `@file` 블록과 함수 doxygen 블록에 HITL 태그(`@ai_model`, `@ai_date`, `@requested_by`, `@human_review`)가 있고, `Done`은 사용자 리뷰 근거가 있을 때만 쓰였다 |
+| CODE-14 | `tools/quality_gate.sh build static metrics comments hitl` 전부 PASS (실행 로그로 확인) |
+
+## TDD — TDD 테스트 (SWE.3, `implementation` + `test-driven-development`)
+| ID | 확인 항목 |
+|---|---|
+| TDD-01 | TDD 테스트가 `tests/tdd/`에 있고 CTest 접두사 `tdd.`를 쓰며 단위 테스트와 섞이지 않았다 |
+| TDD-02 | TDD 결과(JUnit)와 커버리지가 `build/cov/coverage/tdd/`에 별도로 추출되었다 |
+| TDD-03 | TDD 테스트 성공률 100% |
+| TDD-04 | 모든 MIF 동작에 대응하는 TDD 테스트가 있고 `@test`/`@trace`가 달려 있다 |
 
 ## UT — 단위 테스트 (SWE.4, `unit-test`)
 | ID | 확인 항목 |
@@ -74,12 +86,13 @@
 | UT-01 | 모든 모듈·MIF가 하나 이상의 UT로 검증되고 UT가 MOD/SWR로 추적된다 |
 | UT-02 | 동치 클래스·경계값 분석이 적용되었다 |
 | UT-03 | 입력 3개 이상인 함수에 PICT(또는 pairwise 표) 조합이 적용되었다 |
-| UT-04 | 정해진 커버리지 목표(라인·브랜치·MC/DC)를 100% 달성했거나, 미달분에 승인된 정당화가 있다 |
-| UT-05 | MC/DC 목표가 있으면 LLVM 리포트로 측정·확인했다 |
+| UT-04 | **MC/DC 커버리지 100%** (LLVM 리포트 `build/cov/coverage/unit/`로 직접 확인, 정당화로 면제 불가) |
+| UT-05 | **테스트 성공률 100%** (`junit.xml`로 확인) |
 | UT-06 | 모든 테스트 함수에 doxygen 형식의 목적·입력·절차·예상 출력이 있다 |
 | UT-07 | 모든 테스트가 의미 있는 검증(assert)을 하며 커버리지용 무의미 케이스가 없다 |
 | UT-08 | Stub/Mock이 격리가 꼭 필요한 곳에만 쓰였고 대상 로직을 대체하지 않는다 |
 | UT-09 | 테스트 결과·커버리지가 `unit_test_report.md`에 기록되었다 |
+| UT-10 | 단위 테스트가 TDD 테스트의 복사본이 아니며, TDD 테스트 없이 단독으로 MC/DC 100%를 달성한다 |
 
 ## IT — 통합 테스트 (SWE.5, `integration-test`)
 | ID | 확인 항목 |
@@ -89,7 +102,24 @@
 | IT-03 | 각 CIF의 정상 흐름·오류 전파·순서/타이밍·경계 조건이 검증되었다 |
 | IT-04 | 동적 뷰의 각 시나리오에 대응하는 IT가 있다 |
 | IT-05 | 동치 클래스·경계값·PICT 조합이 적용되었다 |
-| IT-06 | 정해진 커버리지 목표를 100% 달성했거나 승인된 정당화가 있다 |
+| IT-06 | **함수 커버리지 100%**, **테스트 성공률 100%** (`build/cov/coverage/integration/`로 확인, 면제 불가) |
 | IT-07 | 모든 테스트 함수에 doxygen 형식의 목적·입력·절차·예상 출력이 있다 |
 | IT-08 | 통합 대상 컴포넌트를 Stub으로 대체하지 않았고, 단위 테스트와 중복되지 않는다 |
 | IT-09 | 테스트 결과가 `integration_test_report.md`에 기록되었다 |
+
+## ST — 시스템 테스트 (SWE.6, `sw-system-test-case`)
+| ID | 확인 항목 |
+|---|---|
+| ST-01 | `sw-system-test-case` 스킬의 생성 조건 1~10을 모두 만족한다 (명세서의 점검 결과표를 재확인) |
+| ST-02 | **요구사항 커버리지 100%** — 모든 SWR/SSR이 통과한 시스템 테스트에 `@trace`된다 (`tools/check_requirements_coverage.py` 결과로 확인) |
+| ST-03 | 시스템 테스트가 외부 인터페이스만 사용하는 블랙박스 테스트다 (내부 함수·구조 의존 없음) |
+| ST-04 | 명세서의 모든 STC가 `tests/system/`에 `@test STC-NNN`으로 구현되었다 |
+| ST-05 | 테스트 성공률 100% (`build/cov/coverage/system/junit.xml`) |
+| ST-06 | 모든 테스트 함수에 doxygen 형식의 목적·입력·절차·예상 출력이 있다 |
+
+## CI — 이터레이션 종료 / PR
+| ID | 확인 항목 |
+|---|---|
+| CI-01 | 전체 품질 게이트 `tools/quality_gate.sh`가 이미지 `claudeclangbuild`에서 PASS |
+| CI-02 | PR이 Gitflow 규칙(feature/* → develop, release/*·hotfix/* → main·develop)을 따른다 |
+| CI-03 | Jenkins 빌드가 SUCCESS다 |

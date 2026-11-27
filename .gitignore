@@ -6,3 +6,6 @@ build/
 out/
 compile_commands.json
 .cache/
+
+# Jenkins local secrets
+ci/jenkins/.env
