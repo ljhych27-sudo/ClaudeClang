@@ -1,0 +1,19 @@
+# Start:  docker compose -f ci/jenkins/docker-compose.yml up -d --build
+# UI:     http://localhost:8080  (admin / password in ci/jenkins/.env)
+services:
+  jenkins:
+    build: .
+    image: claudeclang-jenkins
+    container_name: claudeclang-jenkins
+    # root: needed to use the host Docker socket (Docker Desktop) from pipelines
+    user: root
+    ports:
+      - "8080:8080"
+    environment:
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:?set JENKINS_ADMIN_PASSWORD in ci/jenkins/.env}
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+volumes:
+  jenkins_home:

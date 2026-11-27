@@ -1,0 +1,23 @@
+PROJECT_NAME           = ClaudeClang
+OUTPUT_DIRECTORY       = build/doxygen
+INPUT                  = include src
+RECURSIVE              = YES
+FILE_PATTERNS          = *.c *.h *.cpp *.hpp
+EXTRACT_ALL            = NO
+EXTRACT_STATIC         = YES
+WARN_IF_UNDOCUMENTED   = YES
+WARN_NO_PARAMDOC       = YES
+GENERATE_LATEX         = NO
+HAVE_DOT               = YES
+# Human-in-the-Loop tags (see CLAUDE.md 2.1)
+ALIASES                = "ai_model=@par AI model:^^" \
+                         "ai_date=@par AI date:^^" \
+                         "requested_by=@par Requested by:^^" \
+                         "human_review=@par Human review:^^" \
+                         "reviewed_by=@par Reviewed by:^^" \
+                         "reviewed_date=@par Reviewed date:^^" \
+                         "trace=@par Traces:^^" \
+                         "purpose=@par Purpose:^^" \
+                         "input=@par Input:^^" \
+                         "procedure=@par Procedure:^^" \
+                         "expected=@par Expected:^^"

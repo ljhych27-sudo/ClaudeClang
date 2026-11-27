@@ -106,3 +106,25 @@
 
 **Response**
 - 로컬 커밋 3개(`bcc1793`, `063ce91`, `4d0cd5c`)와 이 기록을 `origin/main`에 푸시
+
+### 12. 수정필요사항 반영
+**Prompt**
+> 수정필요사항.md 반영
+
+(작업 중 추가 프롬프트)
+> 스킬 정합
+> 주석 20% 수준 충족 조건. 스킬에 반영
+> gitflow 따라진행, 이후 작업 알아서 진행. 문제 발생시 원인 파악후 해결, 보고 필수. 환경 모두 구성 진행. 다만 내가 결정필요한 것은 제시
+
+**Response**
+- `CLAUDE.md` 전면 개정: A-SPICE·애자일 이터레이션(분석~시스템 테스트), 단계 게이트, 이터레이션 종료 시 사용자 확인 후 PR, TDD 분리 규칙, 품질 기준표, HITL doxygen 태그, Gitflow, 개발 환경, Jenkins
+- 빌드 이미지 `claudeclangbuild` (`docker/Dockerfile`): Clang/LLVM 21.1.8, CMake 3.28, Ninja, GoogleTest/GMock, Cppcheck 2.13, Lizard, CLOC, Doxygen, PICT. 이미지 이름은 소문자만 허용되어 `ClaudeCLangBuild` → `claudeclangbuild`
+  - 문제: PICT가 `-Werror`로 Clang 21 신규 경고에 빌드 실패 → PICT 빌드에서만 `-Werror` 제거
+- 품질 게이트 `tools/quality_gate.sh` + `tools/check_hitl_comments.py`, `tools/check_requirements_coverage.py`, 커버리지 스크립트를 `tools/llvm_coverage.sh`로 이동(함수 커버리지·JUnit·report-only 추가)
+  - 문제: Cppcheck `unusedFunction`(공개 API가 테스트에서만 호출) → 억제 대신 테스트 코드를 함께 분석해 해결
+  - 문제: 주석률이 전체 평균으로만 계산되어 주석 없는 파일이 통과 → 파일별 20%도 강제. CMakeLists.txt가 CLOC에 포함되던 문제 → C/C++만 집계
+  - 샘플 프로젝트로 전 스테이지 양성·음성 검증 완료
+- Stop 훅 `.claude/hooks/lizard_check.sh`: 변경된 src/include에 Lizard(CCN≤10, 길이≤80), 위반 시 종료 차단. 3가지 경우 검증
+- Jenkins LTS(Docker, 8080): `ci/jenkins/`(Dockerfile, plugins.txt, casc.yaml, docker-compose.yml), 관리자 비밀번호 `ci/jenkins/.env`(git 제외). 멀티브랜치 잡 `ClaudeClang` 생성 확인. `Jenkinsfile`: 이미지 안에서 스테이지별 게이트, Gitflow PR 규칙 검사, JUnit·Cppcheck·커버리지 리포트 게시
+- 스킬 정합: implementation(TDD·HITL·주석률·Cppcheck/Lizard), unit-test(MC/DC 100%, GoogleTest), integration-test(함수 100%), detailed-design(80라인), requirements-analysis(시스템 테스트 입력), review 체크리스트(CODE-11~14, TDD, ST, CI 절 추가), sw-system-test-case(경로·ID·환경·구현 절), aspice-reviewer(게이트 직접 실행)
+- Gitflow: `develop` 생성, `feature/dev-process-update`에서 작업 → develop으로 PR

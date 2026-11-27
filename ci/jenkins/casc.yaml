@@ -1,0 +1,40 @@
+jenkins:
+  systemMessage: "ClaudeClang CI - quality gate runs inside the claudeclangbuild image"
+  numExecutors: 2
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "admin"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+unclassified:
+  location:
+    url: "http://localhost:8080/"
+jobs:
+  - script: >
+      multibranchPipelineJob('ClaudeClang') {
+        displayName('ClaudeClang')
+        description('Gitflow branches (main, develop, feature/*, release/*, hotfix/*) and pull requests')
+        branchSources {
+          branchSource {
+            source {
+              github {
+                id('claudeclang-github')
+                repoOwner('ljhych27-sudo')
+                repository('ClaudeClang')
+                repositoryUrl('https://github.com/ljhych27-sudo/ClaudeClang')
+                configuredByUrl(true)
+                traits {
+                  gitHubBranchDiscovery { strategyId(1) }
+                  gitHubPullRequestDiscovery { strategyId(1) }
+                }
+              }
+            }
+          }
+        }
+        triggers { periodicFolderTrigger { interval('15m') } }
+        orphanedItemStrategy { discardOldItems { numToKeep(20) } }
+      }
