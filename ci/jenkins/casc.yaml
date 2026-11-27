@@ -13,6 +13,9 @@ jenkins:
 unclassified:
   location:
     url: "http://localhost:8080/"
+  gitHubConfiguration:
+    # anonymous access has only 60 req/h; throttle only when actually over the limit
+    apiRateLimitChecker: ThrottleOnOver
 jobs:
   - script: >
       multibranchPipelineJob('ClaudeClang') {

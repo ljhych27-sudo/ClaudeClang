@@ -128,3 +128,7 @@
 - Jenkins LTS(Docker, 8080): `ci/jenkins/`(Dockerfile, plugins.txt, casc.yaml, docker-compose.yml), 관리자 비밀번호 `ci/jenkins/.env`(git 제외). 멀티브랜치 잡 `ClaudeClang` 생성 확인. `Jenkinsfile`: 이미지 안에서 스테이지별 게이트, Gitflow PR 규칙 검사, JUnit·Cppcheck·커버리지 리포트 게시
 - 스킬 정합: implementation(TDD·HITL·주석률·Cppcheck/Lizard), unit-test(MC/DC 100%, GoogleTest), integration-test(함수 100%), detailed-design(80라인), requirements-analysis(시스템 테스트 입력), review 체크리스트(CODE-11~14, TDD, ST, CI 절 추가), sw-system-test-case(경로·ID·환경·구현 절), aspice-reviewer(게이트 직접 실행)
 - Gitflow: `develop` 생성, `feature/dev-process-update`에서 작업 → develop으로 PR
+- PR #1 (feature/dev-process-update → develop) 생성
+  - 문제: Jenkins 스캔 API 호출 403 → CSRF crumb 필요, crumb 사용으로 해결
+  - 문제: Jenkins가 GitHub API를 익명(시간당 60회)으로 호출해 스캔이 대기 상태 → 제한기를 `ThrottleOnOver`로 변경(JCasC). 근본 해결은 GitHub 토큰 등록(사용자 결정 필요)
+  - 임시 git 기반 잡으로 Jenkinsfile 실검증: 이미지 빌드 → 이미지 안에서 전 스테이지 실행 → SUCCESS (확인 후 임시 잡 삭제)
