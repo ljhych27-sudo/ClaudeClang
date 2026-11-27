@@ -64,3 +64,15 @@
 - 사용자 답변: 목적은 "Clang 기반 C/C++ 개발", 커밋·푸시까지 진행
 - `CLAUDE.md` 프로젝트 개요 작성, `README.md`에 요구 사항·빌드 방법 추가, `.gitignore`에 빌드 산출물(`build/`, `out/`, `compile_commands.json`, `.cache/`) 추가
 - 커밋 후 `origin/main`에 푸시
+- 원격에 사용자가 추가한 `스킬추가.md`(A-SPICE 기준 스킬 7종 명세) 커밋이 있어 rebase 후 푸시 (`025e8b2`)
+- 다음 단계로 `스킬추가.md` 기반 스킬 생성 제안
+
+### 8. 다음 단계 진행
+**Prompt**
+> 다음 단계 진행
+
+**Response**
+- `스킬추가.md` 명세대로 `.claude/skills/`에 스킬 7종 생성: `requirements-analysis`(SWE.1), `architecture-design`(SWE.2), `detailed-design`·`implementation`(SWE.3), `unit-test`(SWE.4), `integration-test`(SWE.5), `review`(SUP.4, `checklists.md`에 산출물별 체크리스트)
+- LLVM 커버리지 스크립트 `unit-test/scripts/llvm_coverage.sh` 추가 (라인·브랜치·MC/DC 측정, 목표 대비 합격 판정). Clang 미설치로 실제 측정은 미검증, 문법·판정 로직만 검증
+- `CLAUDE.md`에 프로세스 표·ID 체계·양방향 추적 규칙 추가, `docs/traceability.md` 골격, `.gitattributes`(`*.sh` LF 고정) 추가
+- 로컬 커밋까지 진행, 푸시는 사용자 확인 후
