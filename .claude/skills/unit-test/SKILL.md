@@ -61,7 +61,7 @@ description: A-SPICE SWE.4 소프트웨어 유닛 검증. 모듈(MOD) 단위 테
        --line 100 --branch 100 --mcdc 100
    ```
 4. 목표 미달이면 리포트(`build-cov/coverage/unit/html/index.html`, 콘솔 요약)에서 미커버 라인·브랜치·MC/DC 조건을 찾아 **의미 있는** 케이스를 추가하고 3번을 반복한다.
-5. 결과를 `unit_test_report.md`에 기록하고, 추적성 매트릭스를 갱신하고, `review` 스킬로 테스트 리뷰를 수행한다.
+5. 결과를 `unit_test_report.md`에 기록하고, 추적성 매트릭스를 갱신하고, `aspice-reviewer` 서브에이전트(`review` 스킬)로 테스트 리뷰를 수행한다.
 
 ## Stub / Mock 원칙
 - 하드웨어 접근, 다른 컴포넌트 의존, 비결정적 요소(시간·난수)처럼 **격리가 꼭 필요한 경우에만** 사용한다.

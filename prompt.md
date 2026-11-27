@@ -76,3 +76,19 @@
 - LLVM 커버리지 스크립트 `unit-test/scripts/llvm_coverage.sh` 추가 (라인·브랜치·MC/DC 측정, 목표 대비 합격 판정). Clang 미설치로 실제 측정은 미검증, 문법·판정 로직만 검증
 - `CLAUDE.md`에 프로세스 표·ID 체계·양방향 추적 규칙 추가, `docs/traceability.md` 골격, `.gitattributes`(`*.sh` LF 고정) 추가
 - 로컬 커밋까지 진행, 푸시는 사용자 확인 후
+
+### 9. 리뷰 서브에이전트 생성
+**Prompt**
+> 서브에이전트 생성
+>
+> 리뷰 서브에이전트
+> 서브에이전트는 review 스킬을 적용한다.
+> 분석, 설계, 구현, 테스트 등 각 단계가 완료되면, 이 리뷰 서브에이전트가 산출물의 품질을 리뷰한다.
+> 리뷰 부적함 사항은 모두 조치완료해야 다음 단계로 넘어갈 수 있다.
+> 단호하게 진행한다.(무자비하다, 봐주는것 없다.)
+
+**Response**
+- `.claude/agents/aspice-reviewer.md` 생성: `review` 스킬 적용(`skills: review`), 무관용 원칙(의심 시 NOK, 근거 없는 N/A 금지, 전수 검사, 수치 직접 재확인), `docs/reviews/` 외 수정 금지, 결함 직접 수정 금지
+- `review` 스킬: 조건부 합격 폐지 → NOK 1건이라도 있으면 Fail. 리뷰는 작성자가 아닌 `aspice-reviewer`가 수행
+- `CLAUDE.md`에 단계 게이트 추가: 단계 완료 시 리뷰 필수, 모든 NOK 조치·재리뷰 후 `Pass`여야 다음 단계 진행
+- 각 단계 스킬의 리뷰 단계를 `aspice-reviewer` 호출로 변경

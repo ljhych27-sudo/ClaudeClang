@@ -16,14 +16,13 @@ description: A-SPICE SUP.4 산출물 리뷰. 요구사항·아키텍처·상세 
 3. **항목별 판정**: 각 항목을 `OK / NOK / N/A`로 판정한다. NOK와 N/A에는 근거(파일:라인, ID)를 적는다.
 4. **결함 기록**: NOK마다 결함을 기록한다.
    - 심각도: `Major`(요구 미충족, 안전·추적성 결손, 규칙 위반) / `Minor`(가독성, 표기, 경미한 누락)
-5. **판정**:
-   - `Pass`: NOK 0건
-   - `Conditional Pass`: Minor만 존재, 수정 후 재확인
-   - `Fail`: Major 1건 이상 → 수정 후 재리뷰
+5. **판정** (조건부 합격 없음):
+   - `Pass`: NOK 0건, 모든 결함 Closed
+   - `Fail`: NOK 1건 이상 (심각도 무관) → 전부 조치 후 재리뷰
 6. **기록**: `docs/reviews/RV-YYYYMMDD-NN_<대상>.md`에 아래 템플릿으로 저장한다.
 7. **후속 조치 추적**: 결함이 수정되면 같은 기록의 상태를 `Closed`로 바꾸고 수정 커밋을 적는다.
 
-자기가 방금 작성한 산출물을 리뷰할 때는 작성 맥락에 끌려가지 않도록, 가능하면 별도 서브에이전트에 산출물과 체크리스트만 주고 리뷰를 맡긴다.
+리뷰는 작성자가 아닌 **`aspice-reviewer` 서브에이전트**가 수행한다. 작성자는 리뷰 기록을 수정하거나 결함을 `Closed`로 바꾸지 않는다.
 
 ## 리뷰 기록 템플릿
 ```markdown
@@ -31,7 +30,7 @@ description: A-SPICE SUP.4 산출물 리뷰. 요구사항·아키텍처·상세 
 - 대상: docs/architecture/software_architecture.md @ <커밋>
 - 체크리스트: CMN, ARC
 - 일시 / 리뷰어: 2026-11-27 / <리뷰어>
-- 판정: Pass | Conditional Pass | Fail
+- 판정: Pass | Fail
 
 ## 체크리스트 결과
 | 항목 | 판정 | 근거 |

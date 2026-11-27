@@ -78,4 +78,4 @@ cmake --build build      # 경고 0개 (-Wall -Wextra -Werror 권장)
 - 설계의 모든 MOD/MIF가 구현되고 `@trace`로 연결됨
 - `docs/traceability.md`의 코드 열 갱신
 - 단일 return·상태값 반환 규칙 위반 0건
-- `unit-test` 스킬로 넘어가고, `review` 스킬로 코드 리뷰 수행
+- `aspice-reviewer` 서브에이전트(`review` 스킬)의 코드 리뷰 `Pass` 후에만 `unit-test` 단계로 넘어감
