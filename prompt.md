@@ -92,3 +92,10 @@
 - `review` 스킬: 조건부 합격 폐지 → NOK 1건이라도 있으면 Fail. 리뷰는 작성자가 아닌 `aspice-reviewer`가 수행
 - `CLAUDE.md`에 단계 게이트 추가: 단계 완료 시 리뷰 필수, 모든 NOK 조치·재리뷰 후 `Pass`여야 다음 단계 진행
 - 각 단계 스킬의 리뷰 단계를 `aspice-reviewer` 호출로 변경
+
+### 10. 리뷰어 모델 변경
+**Prompt**
+> 리뷰어 서브에이전트를 haiku 모델을 쓰도록 변경
+
+**Response**
+- `.claude/agents/aspice-reviewer.md` 프론트매터에 `model: haiku` 추가 후 커밋
